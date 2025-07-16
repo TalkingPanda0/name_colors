@@ -4,9 +4,10 @@
   "package": "dev.jolkert.namecolor.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-	"NameColorMixin"
+    "NameColorMixin",
+    "ServerPlayerMixin"
   ],
   "injectors": {
-	"defaultRequire": 1
+    "defaultRequire": 1
   }
 }

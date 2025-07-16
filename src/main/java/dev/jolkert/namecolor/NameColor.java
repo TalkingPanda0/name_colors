@@ -3,20 +3,25 @@ package dev.jolkert.namecolor;
 import com.google.gson.*;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.StringArgumentType;
+import dev.jolkert.namecolor.mixin.ServerPlayerMixin;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.spongepowered.asm.mixin.Unique;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 public class NameColor implements ModInitializer
@@ -54,7 +59,8 @@ public class NameColor implements ModInitializer
 															Text.literal("Changed chat color to ")
 																	.append(Text.literal(
 																					"#" + Integer.toString(color, 16))
-																					.withColor(color)));
+																			.withColor(color)));
+													updatePlayerListName(player);
 													return Command.SINGLE_SUCCESS;
 												}
 												catch (NumberFormatException e)
@@ -76,11 +82,17 @@ public class NameColor implements ModInitializer
 
 												NameColor.clearPlayerColor(player.getUuid());
 												ctx.getSource().sendMessage(Text.literal("Cleared chat color"));
+												updatePlayerListName(player);
 												return Command.SINGLE_SUCCESS;
 											})
 							)
 			);
 		});
+	}
+
+	private void updatePlayerListName(ServerPlayerEntity player){
+		PlayerListS2CPacket packet = new PlayerListS2CPacket(PlayerListS2CPacket.Action.UPDATE_DISPLAY_NAME, player);
+		Objects.requireNonNull(player.getServer()).getPlayerManager().sendToAll(packet);
 	}
 
 	public static void setPlayerColor(UUID uuid, Integer color)
