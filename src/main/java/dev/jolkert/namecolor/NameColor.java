@@ -92,7 +92,7 @@ public class NameColor implements ModInitializer
 
 	private void updatePlayerListName(ServerPlayerEntity player){
 		PlayerListS2CPacket packet = new PlayerListS2CPacket(PlayerListS2CPacket.Action.UPDATE_DISPLAY_NAME, player);
-		Objects.requireNonNull(player.getServer()).getPlayerManager().sendToAll(packet);
+		Objects.requireNonNull(player.getEntityWorld().getServer()).getPlayerManager().sendToAll(packet);
 	}
 
 	public static void setPlayerColor(UUID uuid, Integer color)
