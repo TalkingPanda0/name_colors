@@ -36,6 +36,7 @@ dependencies {
 	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
+	include(modImplementation("me.lucko:fabric-permissions-api:${project.fabric_permission_version}"))
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
@@ -87,4 +88,7 @@ publishing {
 		// The repositories here will be used for publishing your artifact, not for
 		// retrieving dependencies.
 	}
+}
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(21) // Change to 8, 17, or 21
 }

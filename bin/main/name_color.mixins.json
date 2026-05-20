@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "dev.jolkert.namecolor.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "NameColorMixin",
+    "ServerPlayerMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
