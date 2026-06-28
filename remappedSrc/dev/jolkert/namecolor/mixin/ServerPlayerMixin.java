@@ -2,13 +2,12 @@ package dev.jolkert.namecolor.mixin;
 
 import com.mojang.authlib.GameProfile;
 import dev.jolkert.namecolor.NameColor;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
-import net.minecraft.world.World;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -22,25 +21,25 @@ import java.awt.*;
 import java.util.Objects;
 
 
-@Mixin(ServerPlayerEntity.class)
-public abstract class ServerPlayerMixin extends PlayerEntity
+@Mixin(ServerPlayer.class)
+public abstract class ServerPlayerMixin extends Player
 {
     @Shadow
     @Final
     private MinecraftServer server;
 
 
-    public ServerPlayerMixin(World world, GameProfile profile) {
+    public ServerPlayerMixin(Level world, GameProfile profile) {
         super(world, profile);
     }
 
-    @Inject(method = "getPlayerListName", at=@At(value = "RETURN"),cancellable = true)
-    private void modifyPlayerName(CallbackInfoReturnable<Text> cir) {
+    @Inject(method = "getTabListDisplayName", at=@At(value = "RETURN"),cancellable = true)
+    private void modifyPlayerName(CallbackInfoReturnable<Component> cir) {
 
         if(cir.getReturnValue() == null){
-            int color = NameColor.getNameColor(this.getUuid());
+            int color = NameColor.getNameColor(this.getUUID());
             if(color == -1) return;
-            Text displayName = Objects.requireNonNull(this.getDisplayName()).copy().setStyle(Style.EMPTY.withColor(color));
+            Component displayName = Objects.requireNonNull(this.getDisplayName()).copy().setStyle(Style.EMPTY.withColor(color));
 
             cir.setReturnValue(displayName);
         }

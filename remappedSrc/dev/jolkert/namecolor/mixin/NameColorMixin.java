@@ -3,29 +3,29 @@ package dev.jolkert.namecolor.mixin;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import dev.jolkert.namecolor.NameColor;
-import net.minecraft.entity.Entity;
-import net.minecraft.network.message.MessageType;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.ChatType;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
+import net.minecraft.world.entity.Entity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
 
-@Mixin(MessageType.class)
+@Mixin(ChatType.class)
 public class NameColorMixin
 {
 
 	@WrapOperation(
-			method = "params(Lnet/minecraft/registry/RegistryKey;Lnet/minecraft/entity/Entity;)Lnet/minecraft/network/message/MessageType$Parameters;",
+			method = "bind(Lnet/minecraft/resources/ResourceKey;Lnet/minecraft/world/entity/Entity;)Lnet/minecraft/network/chat/ChatType$Bound;",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/entity/Entity;getDisplayName()Lnet/minecraft/text/Text;"
+					target = "Lnet/minecraft/world/entity/Entity;getDisplayName()Lnet/minecraft/network/chat/Component;"
 			)
 	)
-	private static Text test(Entity sourceEntity, Operation<Text> o)
+	private static Component test(Entity sourceEntity, Operation<Component> o)
 	{
-		Text original = o.call(sourceEntity);
-		int color = NameColor.getNameColor(sourceEntity.getUuid());
+		Component original = o.call(sourceEntity);
+		int color = NameColor.getNameColor(sourceEntity.getUUID());
 
 		return color != -1 ?
 				original.copy().setStyle(Style.EMPTY.withColor(color)) :
